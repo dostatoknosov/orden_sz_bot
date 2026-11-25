@@ -1,37 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Новогоднее наступление Ордена</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: #15130f;
-  color: #e8d5ad;
+  padding: 25px 15px;
+  background: #12110e;
+  color: #ead9b5;
   font-family: Georgia, serif;
   text-align: center;
-  padding: 30px 16px;
 }
 
 .container {
   max-width: 650px;
-  margin: auto;
-  border: 1px solid #8b6b37;
-  border-radius: 14px;
-  padding: 25px 16px;
+  margin: 0 auto;
+  padding: 25px 18px;
   background: #211d17;
+  border: 1px solid #92703d;
+  border-radius: 16px;
+  box-shadow: 0 0 35px #000;
 }
 
 .emblem {
   font-size: 48px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 h1 {
-  color: #d9b46b;
-  letter-spacing: 3px;
-  font-size: 30px;
-  text-transform: uppercase;
+  color: #d8b46e;
+  font-size: 27px;
+  letter-spacing: 2px;
+  line-height: 1.4;
+  margin: 10px 0;
 }
 
 .subtitle {
-  color: #b8a98c;
-  margin-bottom: 30px;
+  color: #b5a384;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.line {
+  height: 1px;
+  background: #806239;
+  margin: 20px 0;
 }
 
 .calendar {
@@ -42,50 +63,185 @@ h1 {
 
 .day {
   min-height: 75px;
-  border: 1px solid #796039;
-  border-radius: 8px;
+  border: 1px solid #806239;
+  border-radius: 9px;
   background: #30291f;
   color: #e8d5ad;
+  font-family: Georgia, serif;
   font-size: 22px;
   cursor: pointer;
-}
-
-.day:disabled {
-  opacity: 0.45;
-  cursor: default;
+  transition: 0.2s;
 }
 
 .day.available {
-  background: #74552a;
-  border-color: #e0bd79;
+  background: #76552a;
+  border-color: #e4c17b;
+  color: #ffe7b5;
 }
 
 .day.opened {
-  background: #26382b;
-  border-color: #66866c;
+  background: #283c2d;
+  border-color: #769b77;
+}
+
+.day:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.day.available:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #b68b4d;
 }
 
 .reward {
-  margin-top: 25px;
-  padding: 20px;
-  border: 1px solid #8b6b37;
-  border-radius: 10px;
   display: none;
+  margin-top: 25px;
+  padding: 22px 15px;
+  border: 1px solid #b18a4b;
+  border-radius: 12px;
+  background: #181610;
+  animation: appear 0.4s ease;
 }
 
-.reward h2 { color: #e5c17e; }
+.reward h2 {
+  color: #d9b46b;
+  font-size: 22px;
+}
+
+.reward p {
+  color: #f0dfbd;
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+.reward small {
+  color: #a99573;
+}
 
 footer {
   margin-top: 25px;
-  color: #96866c;
+  color: #8e7c5c;
   font-size: 12px;
+  letter-spacing: 2px;
 }
 
-<div class="calendar" id="calendar"></div>
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-<section class="reward" id="reward">
-  <h2 id="rewardTitle"></h2>
-  <p id="rewardText"></p>
-</section>
+@media (max-width: 400px) {
+  .calendar {
+    gap: 7px;
+  }
 
-<footer>ОРДЕН • 2026</footer>
+  .day {
+    min-height: 65px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+  <div class="emblem">⚔️</div>
+
+  <h1>НОВОГОДНЕЕ<br>НАСТУПЛЕНИЕ ОРДЕНА</h1>
+
+  <p class="subtitle">
+    31 день. 31 историческое изречение.
+  </p>
+
+  <div class="line"></div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <section class="reward" id="reward">
+    <h2 id="rewardTitle"></h2>
+    <p id="rewardText"></p>
+    <small id="rewardAuthor"></small>
+  </section>
+
+  <footer>
+    ОРДЕН • 2026
+  </footer>
+
+</main>
+
+<script>
+const phrases = {
+  1: {
+    title: "ПЕРВОЕ ИЗРЕЧЕНИЕ",
+    text: "«Иду на Вы!»",
+    author: "Князь Святослав Игоревич"
+  }
+};
+
+const calendar = document.getElementById("calendar");
+
+const now = new Date();
+
+const isDecember =
+  now.getFullYear() === 2026 &&
+  now.getMonth() === 11;
+
+const currentDay = isDecember ? now.getDate() : 1;
+
+for (let i = 1; i <= 31; i++) {
+
+  const button = document.createElement("button");
+
+  button.className = "day";
+  button.textContent = i;
+
+  if (i === 1) {
+    button.classList.add("available");
+  }
+
+  if (i > currentDay) {
+    button.disabled = true;
+  }
+
+  button.addEventListener("click", function() {
+
+    const phrase = phrases[i];
+
+    if (!phrase) {
+      alert("Награда этого дня ещё готовится!");
+      return;
+    }
+
+    document.getElementById("rewardTitle").textContent =
+      phrase.title;
+
+    document.getElementById("rewardText").textContent =
+      phrase.text;
+
+    document.getElementById("rewardAuthor").textContent =
+      phrase.author;
+
+    document.getElementById("reward").style.display = "block";
+
+    button.classList.add("opened");
+
+  });
+
+  calendar.appendChild(button);
+}
+</script>
+
+</body>
+</html>
