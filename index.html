@@ -1,265 +1,28 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>Новогоднее наступление Ордена</title>
+<div class="emblem">⚔️</div>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+<h1>
+  НОВОГОДНЕЕ<br>
+  НАСТУПЛЕНИЕ ОРДЕНА
+</h1>
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  padding: 25px 15px;
-  background: #12110e;
-  color: #ead9b5;
-  font-family: Georgia, serif;
-  text-align: center;
-}
-
-.container {
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 25px 18px;
-  background: #211d17;
-  border: 1px solid #92703d;
-  border-radius: 16px;
-  box-shadow: 0 0 35px #000;
-}
-
-.emblem {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-h1 {
-  color: #d8b46e;
-  font-size: 27px;
-  letter-spacing: 2px;
-  line-height: 1.4;
-  margin: 10px 0;
-}
-
-.subtitle {
-  color: #b5a384;
-  font-size: 14px;
-  margin-bottom: 25px;
-}
-
-.line {
-  height: 1px;
-  background: #806239;
-  margin: 20px 0;
-}
-
-.calendar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.day {
-  min-height: 75px;
-  border: 1px solid #806239;
-  border-radius: 9px;
-  background: #30291f;
-  color: #e8d5ad;
-  font-family: Georgia, serif;
-  font-size: 22px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.day.available {
-  background: #76552a;
-  border-color: #e4c17b;
-  color: #ffe7b5;
-}
-
-.day.opened {
-  background: #283c2d;
-  border-color: #769b77;
-}
-
-.day:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.day.available:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px #b68b4d;
-}
-
-.reward {
-  display: none;
-  margin-top: 25px;
-  padding: 22px 15px;
-  border: 1px solid #b18a4b;
-  border-radius: 12px;
-  background: #181610;
-  animation: appear 0.4s ease;
-}
-
-.reward h2 {
-  color: #d9b46b;
-  font-size: 22px;
-}
-
-.reward p {
-  color: #f0dfbd;
-  font-size: 19px;
-  line-height: 1.6;
-}
-
-.reward small {
-  color: #a99573;
-}
-
-footer {
-  margin-top: 25px;
-  color: #8e7c5c;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-@keyframes appear {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 400px) {
-  .calendar {
-    gap: 7px;
-  }
-
-  .day {
-    min-height: 65px;
-  }
-
-  h1 {
-    font-size: 23px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<main class="container">
-
-  <div class="emblem">⚔️</div>
-
-  <h1>НОВОГОДНЕЕ<br>НАСТУПЛЕНИЕ ОРДЕНА</h1>
-
-  <p class="subtitle">
-    31 день. 31 историческое изречение.
-  </p>
-  <p id="welcome" style="color:#d9b46b;font-size:16px;">
-  Добро пожаловать, участник Ордена!
+<p class="subtitle">
+  31 день. 31 историческое изречение.
 </p>
 
-  <div class="line"></div>
+<div class="welcome" id="welcome">
+  Добро пожаловать, боец Ордена!
+</div>
 
-  <div class="calendar" id="calendar"></div>
+<div class="line"></div>
 
-  <section class="reward" id="reward">
-    <h2 id="rewardTitle"></h2>
-    <p id="rewardText"></p>
-    <small id="rewardAuthor"></small>
-  </section>
+<div class="calendar" id="calendar"></div>
 
-  <footer>
-    ОРДЕН • 2026
-  </footer>
+<section class="reward" id="reward">
+  <h2 id="rewardTitle"></h2>
+  <p id="rewardText"></p>
+  <small id="rewardAuthor"></small>
+</section>
 
-</main>
-
-<script>
-const phrases = {
-  1: {
-    title: "ПЕРВОЕ ИЗРЕЧЕНИЕ",
-    text: "«Иду на Вы!»",
-    author: "Князь Святослав Игоревич"
-  }
-};
-
-const calendar = document.getElementById("calendar");
-
-const now = new Date();
-
-const isDecember =
-  now.getFullYear() === 2026 &&
-  now.getMonth() === 11;
-
-const currentDay = isDecember ? now.getDate() : 1;
-
-for (let i = 1; i <= 31; i++) {
-
-  const button = document.createElement("button");
-
-  button.className = "day";
-  button.textContent = i;
-
-  if (i === 1) {
-    button.classList.add("available");
-  }
-
-  if (i > currentDay) {
-    button.disabled = true;
-  }
-
-  button.addEventListener("click", function() {
-
-    const phrase = phrases[i];
-
-    if (!phrase) {
-      alert("Награда этого дня ещё готовится!");
-      return;
-    }
-
-    document.getElementById("rewardTitle").textContent =
-      phrase.title;
-
-    document.getElementById("rewardText").textContent =
-      phrase.text;
-
-    document.getElementById("rewardAuthor").textContent =
-      phrase.author;
-
-    document.getElementById("reward").style.display = "block";
-
-    button.classList.add("opened");
-
-  });
-
-  calendar.appendChild(button);
-}
-</script>
-const tg = window.Telegram?.WebApp;
-
-if (tg) {
-tg.ready();
-tg.expand();
-
-const user = tg.initDataUnsafe?.user;
-
-if (user) {
-const name = user.first_name || "Боец";
-
-document.getElementById("welcome").textContent =
-  "Добро пожаловать, " + name + "! Твоя летопись начинается.";
-}
-}
-</body>
-</html>
+<footer>
+  ОРДЕН • 2026
+</footer>
