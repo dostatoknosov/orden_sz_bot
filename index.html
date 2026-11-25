@@ -1,28 +1,317 @@
-<div class="emblem">⚔️</div>
 
-<h1>
-  НОВОГОДНЕЕ<br>
-  НАСТУПЛЕНИЕ ОРДЕНА
-</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Новогоднее наступление Ордена</title>
 
-<p class="subtitle">
-  31 день. 31 историческое изречение.
-</p>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<div class="welcome" id="welcome">
-  Добро пожаловать, боец Ордена!
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #15130f;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #15130f;
+  color: #ead9b5;
+  font-family: Georgia, serif;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(22px, env(safe-area-inset-top)) 14px
+           max(25px, env(safe-area-inset-bottom));
+  background: linear-gradient(160deg, #292318, #15130f 65%);
+}
+
+.header {
+  text-align: center;
+  padding: 15px 5px 20px;
+}
+
+.emblem {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+h1 {
+  color: #e0bd7b;
+  font-size: clamp(23px, 6vw, 34px);
+  line-height: 1.35;
+  letter-spacing: 2px;
+  margin: 8px 0;
+}
+
+.subtitle {
+  color: #b7a27c;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.welcome {
+  text-align: center;
+  color: #e4c17d;
+  font-size: 16px;
+  margin: 14px 0 20px;
+}
+
+.separator {
+  height: 1px;
+  background: #806239;
+  margin: 18px 0 24px;
+}
+
+.section-title {
+  text-align: center;
+  color: #d9b46b;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 11px;
+  width: 100%;
+}
+
+.day {
+  min-width: 0;
+  aspect-ratio: 1 / 0.88;
+  border: 1px solid #947445;
+  border-radius: 12px;
+  background: #393326;
+  color: #e9d8b7;
+  font-family: Georgia, serif;
+  font-size: clamp(20px, 6vw, 27px);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.day.available {
+  background: linear-gradient(145deg, #9b7439, #61451f);
+  border: 2px solid #e7c77f;
+  color: #fff0c9;
+  box-shadow: 0 0 14px #a57b3c55;
+}
+
+.day.opened {
+  background: #293c2d;
+  border-color: #8ca77d;
+  color: #c8e0bc;
+}
+
+.day:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.day.available:active {
+  transform: scale(0.94);
+}
+
+.reward {
+  display: none;
+  margin-top: 28px;
+  padding: 24px 15px;
+  background: #201b13;
+  border: 1px solid #c09a59;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.reward h2 {
+  color: #e0bd7b;
+  font-size: 20px;
+}
+
+.reward .quote {
+  color: #f2dfb9;
+  font-size: 23px;
+  line-height: 1.5;
+  margin: 20px 0;
+}
+
+.reward .author {
+  color: #b49a6d;
+  font-size: 14px;
+}
+
+footer {
+  text-align: center;
+  color: #b69b6a;
+  font-size: 13px;
+  letter-spacing: 3px;
+  margin-top: 35px;
+  padding-bottom: 10px;
+}
+
+@media (min-width: 700px) {
+  .app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="header">
+    <div class="emblem">⚔️</div>
+
+    <h1>
+      НОВОГОДНЕЕ<br>
+      НАСТУПЛЕНИЕ ОРДЕНА
+    </h1>
+
+    <div class="subtitle">
+      31 день. 31 историческое изречение.
+    </div>
+  </header>
+
+  <div class="welcome" id="welcome">
+    Добро пожаловать, боец Ордена!
+  </div>
+
+  <div class="separator"></div>
+
+  <div class="section-title">
+    КАЛЕНДАРЬ НАСТУПЛЕНИЯ
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <section class="reward" id="reward">
+    <h2 id="rewardTitle"></h2>
+    <div class="quote" id="rewardText"></div>
+    <div class="author" id="rewardAuthor"></div>
+  </section>
+
+  <footer>
+    ОРДЕН • 2026
+  </footer>
+
 </div>
 
-<div class="line"></div>
+<script>
+(function() {
 
-<div class="calendar" id="calendar"></div>
+  // ПОДКЛЮЧЕНИЕ TELEGRAM
 
-<section class="reward" id="reward">
-  <h2 id="rewardTitle"></h2>
-  <p id="rewardText"></p>
-  <small id="rewardAuthor"></small>
-</section>
+  const tg = window.Telegram
+    ? window.Telegram.WebApp
+    : null;
 
-<footer>
-  ОРДЕН • 2026
-</footer>
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+
+  // ПРИВЕТСТВИЕ УЧАСТНИКА
+
+  const welcome = document.getElementById("welcome");
+
+  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    const user = tg.initDataUnsafe.user;
+    const name = user.first_name || "Боец";
+
+    welcome.textContent =
+      "Добро пожаловать, " + name + "! Твоя летопись начинается.";
+  }
+
+  // ИСТОРИЧЕСКИЕ ФРАЗЫ
+
+  const phrases = {
+    1: {
+      title: "ИЗРЕЧЕНИЕ № 1",
+      text: "«Иду на Вы!»",
+      author: "Князь Святослав Игоревич"
+    }
+  };
+
+  // ОПРЕДЕЛЕНИЕ ДОСТУПНОГО ДНЯ
+
+  const now = new Date();
+
+  const isDecember =
+    now.getFullYear() === 2026 &&
+    now.getMonth() === 11;
+
+  const currentDay = isDecember
+    ? now.getDate()
+    : 1;
+
+  // СОЗДАНИЕ КАЛЕНДАРЯ
+
+  const calendar = document.getElementById("calendar");
+
+  for (let i = 1; i <= 31; i++) {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "day";
+    button.textContent = i;
+
+    if (i <= currentDay) {
+      button.classList.add("available");
+    } else {
+      button.disabled = true;
+    }
+
+    button.addEventListener("click", function() {
+
+      const phrase = phrases[i];
+
+      if (!phrase) {
+        alert("Награда этого дня ещё готовится!");
+        return;
+      }
+
+      document.getElementById("rewardTitle").textContent =
+        phrase.title;
+
+      document.getElementById("rewardText").textContent =
+        phrase.text;
+
+      document.getElementById("rewardAuthor").textContent =
+        phrase.author;
+
+      document.getElementById("reward").style.display = "block";
+
+      button.classList.add("opened");
+
+      document.getElementById("reward").scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+    });
+
+    calendar.appendChild(button);
+
+  }
+
+})();
+</script>
+
+</body>
+</html>
